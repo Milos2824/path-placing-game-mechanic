@@ -51,7 +51,7 @@ export class AppComponent implements AfterViewInit {
         node.onclick = (event) => {
           const target = event.target as HTMLElement | null;
           if (target) {
-            this.getFirstPosition(target);
+            this.getPosition(target);
           }
         };
         // nodes.push({ x, y });
@@ -77,7 +77,7 @@ export class AppComponent implements AfterViewInit {
     y = 60;
   }
 
-  getFirstPosition(node: HTMLElement) {
+  getPosition(node: HTMLElement) {
     const nodeId = node.id;
     if (this.firstNode == null) {
       this.firstNode = node;
