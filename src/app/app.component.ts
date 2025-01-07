@@ -111,27 +111,27 @@ export class AppComponent implements AfterViewInit {
 
         if (secPosX > firstPosX && secPosY < firstPosY) {
           if (secPosX - firstPosX == secPosY - firstPosY || secPosX - firstPosX == (secPosY - firstPosY) * -1) {
-            // ctx = this.drawCurvedRoad(ctx,firstPosX, firstPosY - 45, secPosX - 45, secPosY);
-            // ctx = this.drawCurvedRoad(ctx,firstPosX, firstPosY, secPosX, secPosY);
-            // ctx = this.drawCurvedRoad(ctx,firstPosX, firstPosY + 45, secPosX + 45, secPosY);
-            // let r = secPosX - 45 - firstPosX;
-            // ctx.moveTo(firstPosX, firstPosY - 45);
-            // ctx.arcTo(secPosX - 45, firstPosY - 45, secPosX - 45, secPosY, r);
-            // ctx.lineTo(secPosX+45,secPosY);
-            // r = secPosX - firstPosX+45;
-            // ctx.arcTo(secPosX+45, firstPosY+45, secPosX, firstPosY+45, r);
-            // ctx.lineTo(firstPosX,firstPosY - 45);
-            // ctx.fillStyle = '#2dc115';
-            // ctx.fill();
+            const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            if (this.currentRoadDirection == 'right') {
+              // From left
+              path.setAttribute('d', `M ${firstPosX} ${firstPosY - 45}, A ${(secPosX - 45) - firstPosX} ${secPosY - (firstPosY - 45)} 1 0 0  ${secPosX - 45} ${secPosY},
+                L ${secPosX + 45} ${secPosY}, A ${secPosX + 45 - firstPosX} ${firstPosY + 45 - secPosY} 0 0 1 ${firstPosX} ${firstPosY + 45}, Z`);
+              path.setAttribute('stroke', '#2dc115');
+              path.setAttribute('stroke-width', '1');
+              path.setAttribute('fill', '#2dc115');
 
+              this.svgElement.nativeElement.appendChild(path);
+            }
+            if (this.currentRoadDirection == 'down') {
+              //From up
+              path.setAttribute('d', `M ${firstPosX - 45} ${firstPosY}, A ${secPosX - (firstPosX - 45)} ${secPosY + 45 - firstPosY} 0 0 0  ${secPosX} ${secPosY + 45},
+                L ${secPosX} ${secPosY - 45}, A ${secPosX - (firstPosX + 45)} ${(secPosY - 45) - firstPosY} 0 0 1 ${firstPosX + 45} ${firstPosY}, Z`);
+              path.setAttribute('stroke', '#2dc115');
+              path.setAttribute('stroke-width', '1');
+              path.setAttribute('fill', '#2dc115');
 
-            // r = secPosX - firstPosX;
-            // ctx.moveTo(firstPosX, firstPosY);
-            // ctx.arcTo(secPosX, firstPosY, secPosX, secPosY, r);
-
-            // r = secPosX + 45 - firstPosX;
-            // ctx.moveTo(firstPosX, firstPosY + 45);
-            // ctx.arcTo(secPosX + 45, firstPosY + 45, secPosX + 45, secPosY, r);
+              this.svgElement.nativeElement.appendChild(path);
+            }
           }
         }
         // Curved road down right
