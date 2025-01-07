@@ -12,15 +12,13 @@ export class AppComponent implements AfterViewInit {
   firstNode: null | HTMLElement = null;
   secondNode: null | HTMLElement = null;
 
-  // firstNodePosX: null | number = null;
-  // firstNodePosY: null | number = null;
-
-  // secondNodePosX: null | number = null;
-  // secondNodePosY: null | number = null;
   title = 'path-placing-game-mechanic';
   @ViewChild('grid') gridArea!: ElementRef;
   @ViewChild('canvasElement') canvasElement!: ElementRef;
   @ViewChild('svgElement') svgElement!: ElementRef;
+
+  roads: SVGPathElement[] = [];
+  currentRoadDirection: string | null = null;
 
   constructor() {
   }
@@ -87,6 +85,7 @@ export class AppComponent implements AfterViewInit {
       return
     }
     if (this.firstNode == node) {
+      this.currentRoadDirection = null;
       this.firstNode = null;
       node.style.backgroundColor = '#817e7e';
       node.style.opacity = '0.0';
@@ -99,6 +98,7 @@ export class AppComponent implements AfterViewInit {
       const secPos = this.secondNode.getBoundingClientRect();
       const secPosX = secPos.left + 45;
       const secPosY = secPos.top + 45;
+      this.findEndOfRoad(`${firstPosX}${firstPosY}`);
       if (firstPosX != null && firstPosY != null && secPosX != null && secPosY) {
         console.log('Position2X - Position1:', `${secPosX - firstPosX}`);
         console.log('Position1Y - Position2Y:', `${secPosY - firstPosY}`);
@@ -111,7 +111,6 @@ export class AppComponent implements AfterViewInit {
 
         if (secPosX > firstPosX && secPosY < firstPosY) {
           if (secPosX - firstPosX == secPosY - firstPosY || secPosX - firstPosX == (secPosY - firstPosY) * -1) {
-            this.drawCurvedRoad(ctx, firstPosX, firstPosY - 45, secPosX - 45, secPosY);
             // ctx = this.drawCurvedRoad(ctx,firstPosX, firstPosY - 45, secPosX - 45, secPosY);
             // ctx = this.drawCurvedRoad(ctx,firstPosX, firstPosY, secPosX, secPosY);
             // ctx = this.drawCurvedRoad(ctx,firstPosX, firstPosY + 45, secPosX + 45, secPosY);
@@ -135,38 +134,31 @@ export class AppComponent implements AfterViewInit {
             // ctx.arcTo(secPosX + 45, firstPosY + 45, secPosX + 45, secPosY, r);
           }
         }
-        // Curved road down left
+        // Curved road down right
         if (secPosX > firstPosX && secPosY > firstPosY) {
           if (secPosX - firstPosX == secPosY - firstPosY || secPosX - firstPosX == (secPosY - firstPosY) * -1) {
+            console.log('Direction:', this.currentRoadDirection);
             const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-            //                              100           50                                                                                350           300
-            path.setAttribute('d', `M ${firstPosX} ${firstPosY - 45}, A ${secPosX + 45 - firstPosX} ${secPosY - (firstPosY - 45)} 0 0 1  ${secPosX + 45} ${secPosY},
-               L ${secPosX - 45} ${secPosY}, A ${(secPosX - 45) - firstPosX} ${secPosY - (firstPosY + 45)} 0 0 0 ${firstPosX} ${firstPosY + 45}, Z`);
-            path.setAttribute('stroke', '#2dc115');
-            path.setAttribute('stroke-width', '1');
-            path.setAttribute('fill', '#2dc115');
+            if (this.currentRoadDirection == 'right') {
+              // From left
+              path.setAttribute('d', `M ${firstPosX} ${firstPosY - 45}, A ${secPosX + 45 - firstPosX} ${secPosY - (firstPosY - 45)} 0 0 1  ${secPosX + 45} ${secPosY},
+                L ${secPosX - 45} ${secPosY}, A ${(secPosX - 45) - firstPosX} ${secPosY - (firstPosY + 45)} 0 0 0 ${firstPosX} ${firstPosY + 45}, Z`);
+              path.setAttribute('stroke', '#2dc115');
+              path.setAttribute('stroke-width', '1');
+              path.setAttribute('fill', '#2dc115');
 
-            this.svgElement.nativeElement.appendChild(path);
+              this.svgElement.nativeElement.appendChild(path);
+            }
+            if (this.currentRoadDirection == 'down') {
+              //From up
+              path.setAttribute('d', `M ${firstPosX - 45} ${firstPosY}, A ${secPosX - (firstPosX - 45)} ${secPosY + 45 - firstPosY} 0 0 0  ${secPosX} ${secPosY + 45},
+                L ${secPosX} ${secPosY - 45}, A ${secPosX - (firstPosX + 45)} ${(secPosY - 45) - firstPosY} 0 0 1 ${firstPosX + 45} ${firstPosY}, Z`);
+              path.setAttribute('stroke', '#2dc115');
+              path.setAttribute('stroke-width', '1');
+              path.setAttribute('fill', '#2dc115');
 
-
-            path.setAttribute('d', `M ${firstPosX} ${firstPosY - 45}, A ${secPosX + 45 - firstPosX} ${secPosY - (firstPosY - 45)} 0 0 1  ${secPosX + 45} ${secPosY},
-               L ${secPosX - 45} ${secPosY}, A ${(secPosX - 45) - firstPosX} ${secPosY - (firstPosY + 45)} 0 0 0 ${firstPosX} ${firstPosY + 45}, Z`);
-            path.setAttribute('stroke', '#2dc115');
-            path.setAttribute('stroke-width', '1');
-            path.setAttribute('fill', '#2dc115');
-
-            this.svgElement.nativeElement.appendChild(path);
-            // let r = secPosX - 45 - firstPosX;
-            // ctx.moveTo(firstPosX, firstPosY + 45);
-            // ctx.arcTo(secPosX - 45, firstPosY + 45, secPosX - 45, secPosY, r);
-
-            // r = secPosX - firstPosX;
-            // ctx.moveTo(firstPosX, firstPosY);
-            // ctx.arcTo(secPosX, firstPosY, secPosX, secPosY, r);
-
-            // r = secPosX + 45 - firstPosX;
-            // ctx.moveTo(firstPosX, firstPosY - 45);
-            // ctx.arcTo(secPosX + 45, firstPosY - 45, secPosX + 45, secPosY, r);
+              this.svgElement.nativeElement.appendChild(path);
+            }
           }
         }
         if (firstPosX > secPosX && firstPosY > secPosY) {
@@ -199,42 +191,64 @@ export class AppComponent implements AfterViewInit {
             ctx.arcTo(secPosX + 45, firstPosY + 45, secPosX + 45, secPosY, r);
           }
         }
-        if (firstPosX == secPosX && firstPosY > secPosY) {
-          ctx.moveTo(firstPosX - 45, firstPosY);
-          ctx.lineTo(secPosX - 45, secPosY);
-          ctx.lineTo(secPosX + 45, secPosY);
-          ctx.lineTo(firstPosX + 45, firstPosY);
-          ctx.lineTo(firstPosX - 45, firstPosY);
-          ctx.fillStyle = '#2dc115';
-          ctx.fill();
-        }
+        // if (firstPosX == secPosX && firstPosY > secPosY) {
+        //   ctx.moveTo(firstPosX - 45, firstPosY);
+        //   ctx.lineTo(secPosX - 45, secPosY);
+        //   ctx.lineTo(secPosX + 45, secPosY);
+        //   ctx.lineTo(firstPosX + 45, firstPosY);
+        //   ctx.lineTo(firstPosX - 45, firstPosY);
+        //   ctx.fillStyle = '#2dc115';
+        //   ctx.fill();
+        // }
+        //Down
         if (firstPosX == secPosX && firstPosY < secPosY) {
-          ctx.moveTo(firstPosX - 45, firstPosY);
-          ctx.lineTo(secPosX - 45, secPosY);
-          ctx.lineTo(secPosX + 45, secPosY);
-          ctx.lineTo(firstPosX + 45, firstPosY);
-          ctx.lineTo(firstPosX - 45, firstPosY);
-          ctx.fillStyle = '#2dc115';
-          ctx.fill();
+          const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+          path.setAttribute('d', `M ${firstPosX - 45} ${firstPosY},L ${secPosX - 45} ${secPosY}, L ${secPosX + 45} ${secPosY}, L ${firstPosX + 45} ${firstPosY} , Z`);
+          path.setAttribute('stroke', '#2dc115');
+          path.setAttribute('stroke-width', '1');
+          path.setAttribute('fill', '#2dc115');
+
+          path.setAttribute('data-start-pos', `${firstPosX}${firstPosY}`);
+          path.setAttribute('data-start', 'up');
+          path.setAttribute('data-end-pos', `${secPosX}${secPosY}`);
+          path.setAttribute('data-end', 'down');
+
+          path.id = `${firstPosX}${firstPosY}${secPosX}${secPosY}`;
+
+          this.roads.push(path);
+          console.log('Roads:', this.roads);
+
+          this.svgElement.nativeElement.appendChild(path);
         }
+        //Right
         if (firstPosY == secPosY && firstPosX < secPosX) {
-          ctx.moveTo(firstPosX, firstPosY - 45);
-          ctx.lineTo(secPosX, secPosY - 45);
-          ctx.lineTo(secPosX, secPosY + 45);
-          ctx.lineTo(firstPosX, firstPosY + 45);
-          ctx.lineTo(firstPosX, firstPosY - 45);
-          ctx.fillStyle = '#2dc115';
-          ctx.fill();
+          const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+          path.setAttribute('d', `M ${firstPosX} ${firstPosY - 45},L ${secPosX} ${secPosY - 45}, L ${secPosX} ${secPosY + 45}, L ${firstPosX} ${firstPosY + 45} , Z`);
+          path.setAttribute('stroke', '#2dc115');
+          path.setAttribute('stroke-width', '1');
+          path.setAttribute('fill', '#2dc115');
+
+          path.setAttribute('data-start-pos', `${firstPosX}${firstPosY}`);
+          path.setAttribute('data-start', 'left');
+          path.setAttribute('data-end-pos', `${secPosX}${secPosY}`);
+          path.setAttribute('data-end', 'right');
+
+          path.id = `${firstPosX}${firstPosY}${secPosX}${secPosY}`;
+
+          this.roads.push(path);
+          console.log('Roads:', this.roads);
+
+          this.svgElement.nativeElement.appendChild(path);
         }
-        if (firstPosY == secPosY && firstPosX > secPosX) {
-          ctx.moveTo(firstPosX, firstPosY - 45);
-          ctx.lineTo(secPosX, secPosY - 45);
-          ctx.lineTo(secPosX, secPosY + 45);
-          ctx.lineTo(firstPosX, firstPosY + 45);
-          ctx.lineTo(firstPosX, firstPosY - 45);
-          ctx.fillStyle = '#2dc115';
-          ctx.fill();
-        }
+        // if (firstPosY == secPosY && firstPosX > secPosX) {
+        //   ctx.moveTo(firstPosX, firstPosY - 45);
+        //   ctx.lineTo(secPosX, secPosY - 45);
+        //   ctx.lineTo(secPosX, secPosY + 45);
+        //   ctx.lineTo(firstPosX, firstPosY + 45);
+        //   ctx.lineTo(firstPosX, firstPosY - 45);
+        //   ctx.fillStyle = '#2dc115';
+        //   ctx.fill();
+        // }
 
 
         ctx.strokeStyle = '#2dc115';
@@ -257,9 +271,18 @@ export class AppComponent implements AfterViewInit {
   //   ctx.arcTo(secPosX - 45, firstPosY + 45, secPosX - 45, secPosY, r);
   //   return ctx;
   // }
-  drawCurvedRoad(ctx: CanvasRenderingContext2D, firstPosX: number, firstPosY: number, secPosX: number, secPosY: number) {
-    let r = secPosX - 45 - firstPosX;
-    ctx.moveTo(firstPosX, firstPosY + 45);
-    ctx.arcTo(secPosX - 45, firstPosY + 45, secPosX - 45, secPosY, r);
+  findEndOfRoad(roadStart: string) {
+    const road = this.roads.find(road => road.dataset?.['startPos'] === roadStart || road.dataset?.['endPos'] === roadStart);
+
+    if (road) {
+      if (road.dataset?.['startPos'] === roadStart) {
+        this.currentRoadDirection = road.dataset?.['start'] ?? null;
+        return;
+      } else if (road.dataset?.['endPos'] === roadStart) {
+        this.currentRoadDirection = road.dataset?.['end'] ?? null;
+        return;
+      }
+    }
+    this.currentRoadDirection = null;
   }
 }
