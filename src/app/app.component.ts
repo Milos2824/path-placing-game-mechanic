@@ -20,6 +20,7 @@ export class AppComponent implements AfterViewInit {
   title = 'path-placing-game-mechanic';
   @ViewChild('grid') gridArea!: ElementRef;
   @ViewChild('canvasElement') canvasElement!: ElementRef;
+  @ViewChild('svgElement') svgElement!: ElementRef;
 
   constructor() {
   }
@@ -102,6 +103,7 @@ export class AppComponent implements AfterViewInit {
         console.log('Position2X - Position1:', `${secPosX - firstPosX}`);
         console.log('Position1Y - Position2Y:', `${secPosY - firstPosY}`);
         const canvas = this.canvasElement.nativeElement;
+        const svg = this.svgElement.nativeElement;
         const ctx = canvas.getContext('2d');
         ctx.beginPath()
         console.log('Position1:', `X: ${firstPosX}, Y: ${firstPosY}`);
@@ -109,18 +111,20 @@ export class AppComponent implements AfterViewInit {
 
         if (secPosX > firstPosX && secPosY < firstPosY) {
           if (secPosX - firstPosX == secPosY - firstPosY || secPosX - firstPosX == (secPosY - firstPosY) * -1) {
+            this.drawCurvedRoad(ctx, firstPosX, firstPosY - 45, secPosX - 45, secPosY);
             // ctx = this.drawCurvedRoad(ctx,firstPosX, firstPosY - 45, secPosX - 45, secPosY);
             // ctx = this.drawCurvedRoad(ctx,firstPosX, firstPosY, secPosX, secPosY);
             // ctx = this.drawCurvedRoad(ctx,firstPosX, firstPosY + 45, secPosX + 45, secPosY);
-            let r = secPosX - 45 - firstPosX;
-            ctx.moveTo(firstPosX, firstPosY - 45);
-            ctx.arcTo(secPosX - 45, firstPosY - 45, secPosX - 45, secPosY, r);
-            ctx.lineTo(secPosX+45,secPosY);
-            r = secPosX - firstPosX+45;
-            ctx.arcTo(secPosX+45, firstPosY+45, secPosX, firstPosY+45, r);
-            ctx.lineTo(firstPosX,firstPosY - 45);
-            ctx.fillStyle = '#2dc115';
-            ctx.fill();
+            // let r = secPosX - 45 - firstPosX;
+            // ctx.moveTo(firstPosX, firstPosY - 45);
+            // ctx.arcTo(secPosX - 45, firstPosY - 45, secPosX - 45, secPosY, r);
+            // ctx.lineTo(secPosX+45,secPosY);
+            // r = secPosX - firstPosX+45;
+            // ctx.arcTo(secPosX+45, firstPosY+45, secPosX, firstPosY+45, r);
+            // ctx.lineTo(firstPosX,firstPosY - 45);
+            // ctx.fillStyle = '#2dc115';
+            // ctx.fill();
+
 
             // r = secPosX - firstPosX;
             // ctx.moveTo(firstPosX, firstPosY);
@@ -131,88 +135,107 @@ export class AppComponent implements AfterViewInit {
             // ctx.arcTo(secPosX + 45, firstPosY + 45, secPosX + 45, secPosY, r);
           }
         }
+        // Curved road down left
         if (secPosX > firstPosX && secPosY > firstPosY) {
           if (secPosX - firstPosX == secPosY - firstPosY || secPosX - firstPosX == (secPosY - firstPosY) * -1) {
-            let r = secPosX - 45 - firstPosX;
-            ctx.moveTo(firstPosX, firstPosY + 45);
-            ctx.arcTo(secPosX - 45, firstPosY + 45, secPosX - 45, secPosY, r);
+            const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            //                              100           50                                                                                350           300
+            path.setAttribute('d', `M ${firstPosX} ${firstPosY - 45}, A ${secPosX + 45 - firstPosX} ${secPosY - (firstPosY - 45)} 0 0 1  ${secPosX + 45} ${secPosY},
+               L ${secPosX - 45} ${secPosY}, A ${(secPosX - 45) - firstPosX} ${secPosY - (firstPosY + 45)} 0 0 0 ${firstPosX} ${firstPosY + 45}, Z`);
+            path.setAttribute('stroke', '#2dc115');
+            path.setAttribute('stroke-width', '1');
+            path.setAttribute('fill', '#2dc115');
 
-            r = secPosX - firstPosX;
-            ctx.moveTo(firstPosX, firstPosY);
-            ctx.arcTo(secPosX, firstPosY, secPosX, secPosY, r);
+            this.svgElement.nativeElement.appendChild(path);
 
-            r = secPosX + 45 - firstPosX;
-            ctx.moveTo(firstPosX, firstPosY - 45);
-            ctx.arcTo(secPosX + 45, firstPosY - 45, secPosX + 45, secPosY, r);
+
+            path.setAttribute('d', `M ${firstPosX} ${firstPosY - 45}, A ${secPosX + 45 - firstPosX} ${secPosY - (firstPosY - 45)} 0 0 1  ${secPosX + 45} ${secPosY},
+               L ${secPosX - 45} ${secPosY}, A ${(secPosX - 45) - firstPosX} ${secPosY - (firstPosY + 45)} 0 0 0 ${firstPosX} ${firstPosY + 45}, Z`);
+            path.setAttribute('stroke', '#2dc115');
+            path.setAttribute('stroke-width', '1');
+            path.setAttribute('fill', '#2dc115');
+
+            this.svgElement.nativeElement.appendChild(path);
+            // let r = secPosX - 45 - firstPosX;
+            // ctx.moveTo(firstPosX, firstPosY + 45);
+            // ctx.arcTo(secPosX - 45, firstPosY + 45, secPosX - 45, secPosY, r);
+
+            // r = secPosX - firstPosX;
+            // ctx.moveTo(firstPosX, firstPosY);
+            // ctx.arcTo(secPosX, firstPosY, secPosX, secPosY, r);
+
+            // r = secPosX + 45 - firstPosX;
+            // ctx.moveTo(firstPosX, firstPosY - 45);
+            // ctx.arcTo(secPosX + 45, firstPosY - 45, secPosX + 45, secPosY, r);
           }
         }
-        if (firstPosX > secPosX && firstPosY>secPosY) {
+        if (firstPosX > secPosX && firstPosY > secPosY) {
           if (secPosX - firstPosX == secPosY - firstPosY || secPosX - firstPosX == (secPosY - firstPosY) * -1) {
             let r = firstPosX - secPosX - 45;
-            ctx.moveTo(firstPosX, firstPosY-45);
-            ctx.arcTo(secPosX + 45, firstPosY-45, secPosX + 45, secPosY, r);
+            ctx.moveTo(firstPosX, firstPosY - 45);
+            ctx.arcTo(secPosX + 45, firstPosY - 45, secPosX + 45, secPosY, r);
 
             r = firstPosX - secPosX;
             ctx.moveTo(firstPosX, firstPosY);
             ctx.arcTo(secPosX, firstPosY, secPosX, secPosY, r);
 
-            r = firstPosX - secPosX+45;
+            r = firstPosX - secPosX + 45;
             ctx.moveTo(firstPosX, firstPosY + 45);
-            ctx.arcTo(secPosX-45, firstPosY + 45, secPosX-45, secPosY, r);
+            ctx.arcTo(secPosX - 45, firstPosY + 45, secPosX - 45, secPosY, r);
           }
         }
-        if (firstPosX > secPosX && firstPosY<secPosY) {
+        if (firstPosX > secPosX && firstPosY < secPosY) {
           if (secPosX - firstPosX == secPosY - firstPosY || secPosX - firstPosX == (secPosY - firstPosY) * -1) {
-            let r = firstPosX - secPosX+45;
-            ctx.moveTo(firstPosX, firstPosY-45);
-            ctx.arcTo(secPosX-45, firstPosY-45, secPosX-45, secPosY, r);
+            let r = firstPosX - secPosX + 45;
+            ctx.moveTo(firstPosX, firstPosY - 45);
+            ctx.arcTo(secPosX - 45, firstPosY - 45, secPosX - 45, secPosY, r);
 
             r = firstPosX - secPosX;
             ctx.moveTo(firstPosX, firstPosY);
             ctx.arcTo(secPosX, firstPosY, secPosX, secPosY, r);
 
-            r = firstPosX - secPosX-45;
-            ctx.moveTo(firstPosX, firstPosY+45);
-            ctx.arcTo(secPosX+45, firstPosY+45, secPosX+45, secPosY, r);
+            r = firstPosX - secPosX - 45;
+            ctx.moveTo(firstPosX, firstPosY + 45);
+            ctx.arcTo(secPosX + 45, firstPosY + 45, secPosX + 45, secPosY, r);
           }
         }
-        if(firstPosX==secPosX && firstPosY>secPosY){
-          ctx.moveTo(firstPosX-45, firstPosY);
-          ctx.lineTo(secPosX-45, secPosY);
-          ctx.lineTo(secPosX+45, secPosY);
-          ctx.lineTo(firstPosX+45, firstPosY);
-          ctx.lineTo(firstPosX-45, firstPosY);
+        if (firstPosX == secPosX && firstPosY > secPosY) {
+          ctx.moveTo(firstPosX - 45, firstPosY);
+          ctx.lineTo(secPosX - 45, secPosY);
+          ctx.lineTo(secPosX + 45, secPosY);
+          ctx.lineTo(firstPosX + 45, firstPosY);
+          ctx.lineTo(firstPosX - 45, firstPosY);
           ctx.fillStyle = '#2dc115';
           ctx.fill();
         }
-        if(firstPosX==secPosX && firstPosY<secPosY){
-          ctx.moveTo(firstPosX-45, firstPosY);
-          ctx.lineTo(secPosX-45, secPosY);
-          ctx.lineTo(secPosX+45, secPosY);
-          ctx.lineTo(firstPosX+45, firstPosY);
-          ctx.lineTo(firstPosX-45, firstPosY);
+        if (firstPosX == secPosX && firstPosY < secPosY) {
+          ctx.moveTo(firstPosX - 45, firstPosY);
+          ctx.lineTo(secPosX - 45, secPosY);
+          ctx.lineTo(secPosX + 45, secPosY);
+          ctx.lineTo(firstPosX + 45, firstPosY);
+          ctx.lineTo(firstPosX - 45, firstPosY);
           ctx.fillStyle = '#2dc115';
           ctx.fill();
         }
-        if(firstPosY==secPosY && firstPosX<secPosX){
-          ctx.moveTo(firstPosX, firstPosY-45);
-          ctx.lineTo(secPosX, secPosY-45);
-          ctx.lineTo(secPosX, secPosY+45);
-          ctx.lineTo(firstPosX, firstPosY+45);
-          ctx.lineTo(firstPosX, firstPosY-45);
+        if (firstPosY == secPosY && firstPosX < secPosX) {
+          ctx.moveTo(firstPosX, firstPosY - 45);
+          ctx.lineTo(secPosX, secPosY - 45);
+          ctx.lineTo(secPosX, secPosY + 45);
+          ctx.lineTo(firstPosX, firstPosY + 45);
+          ctx.lineTo(firstPosX, firstPosY - 45);
           ctx.fillStyle = '#2dc115';
           ctx.fill();
         }
-        if(firstPosY==secPosY && firstPosX>secPosX){
-          ctx.moveTo(firstPosX, firstPosY-45);
-          ctx.lineTo(secPosX, secPosY-45);
-          ctx.lineTo(secPosX, secPosY+45);
-          ctx.lineTo(firstPosX, firstPosY+45);
-          ctx.lineTo(firstPosX, firstPosY-45);
+        if (firstPosY == secPosY && firstPosX > secPosX) {
+          ctx.moveTo(firstPosX, firstPosY - 45);
+          ctx.lineTo(secPosX, secPosY - 45);
+          ctx.lineTo(secPosX, secPosY + 45);
+          ctx.lineTo(firstPosX, firstPosY + 45);
+          ctx.lineTo(firstPosX, firstPosY - 45);
           ctx.fillStyle = '#2dc115';
           ctx.fill();
         }
-        
+
 
         ctx.strokeStyle = '#2dc115';
         ctx.lineWidth = 1 + 'px';
@@ -234,4 +257,9 @@ export class AppComponent implements AfterViewInit {
   //   ctx.arcTo(secPosX - 45, firstPosY + 45, secPosX - 45, secPosY, r);
   //   return ctx;
   // }
+  drawCurvedRoad(ctx: CanvasRenderingContext2D, firstPosX: number, firstPosY: number, secPosX: number, secPosY: number) {
+    let r = secPosX - 45 - firstPosX;
+    ctx.moveTo(firstPosX, firstPosY + 45);
+    ctx.arcTo(secPosX - 45, firstPosY + 45, secPosX - 45, secPosY, r);
+  }
 }
