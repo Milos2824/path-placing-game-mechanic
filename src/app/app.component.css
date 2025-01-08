@@ -31,6 +31,17 @@
     width: 100vw;
     height: 100vh;
     overflow: hidden;
+    z-index: 0;
+}
+
+.canvasElementLine{
+    top: 0;
+    left: 0;
+    position: absolute;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    z-index: 1;
 }
 
 .svgElement{
