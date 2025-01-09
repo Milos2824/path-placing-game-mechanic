@@ -265,46 +265,48 @@ export class AppComponent implements AfterViewInit {
         }
         // Curved road down left
         if (firstPosX > secPosX && firstPosY < secPosY) {
-          const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-          if (this.currentRoadDirection == 'left' || this.currentRoadDirection == 'downleft' || this.currentRoadDirection == 'upleft') {
-            // From right
-            path.setAttribute('d', `M ${firstPosX} ${firstPosY - 45}, A ${firstPosX - (secPosX - 45)} ${secPosY - (firstPosY - 45)} 1 0 0  ${secPosX - 45} ${secPosY},
+          if (secPosX - firstPosX == secPosY - firstPosY || secPosX - firstPosX == (secPosY - firstPosY) * -1) {
+            const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            if (this.currentRoadDirection == 'left' || this.currentRoadDirection == 'downleft' || this.currentRoadDirection == 'upleft') {
+              // From right
+              path.setAttribute('d', `M ${firstPosX} ${firstPosY - 45}, A ${firstPosX - (secPosX - 45)} ${secPosY - (firstPosY - 45)} 1 0 0  ${secPosX - 45} ${secPosY},
                 L ${secPosX + 45} ${secPosY}, A ${firstPosX - (secPosX + 45)} ${secPosY - (firstPosY + 45)} 0 0 1 ${firstPosX} ${firstPosY + 45}, Z`);
-            path.setAttribute('stroke', '#2dc115');
-            path.setAttribute('stroke-width', '1');
-            path.setAttribute('fill', '#2dc115');
+              path.setAttribute('stroke', '#2dc115');
+              path.setAttribute('stroke-width', '1');
+              path.setAttribute('fill', '#2dc115');
 
-            path.setAttribute('data-start-pos', `${firstPosX}${firstPosY}`);
-            path.setAttribute('data-start', 'upright');
-            path.setAttribute('data-end-pos', `${secPosX}${secPosY}`);
-            path.setAttribute('data-end', 'leftdown');
+              path.setAttribute('data-start-pos', `${firstPosX}${firstPosY}`);
+              path.setAttribute('data-start', 'upright');
+              path.setAttribute('data-end-pos', `${secPosX}${secPosY}`);
+              path.setAttribute('data-end', 'leftdown');
 
-            path.id = `${firstPosX}${firstPosY}${secPosX}${secPosY}`;
+              path.id = `${firstPosX}${firstPosY}${secPosX}${secPosY}`;
 
-            this.roads.push(path);
-            console.log('Roads:', this.roads);
+              this.roads.push(path);
+              console.log('Roads:', this.roads);
 
-            this.svgElement.nativeElement.appendChild(path);
-          }
-          if (this.currentRoadDirection == 'down' || this.currentRoadDirection == 'rightdown' || this.currentRoadDirection == 'leftdown') {
-            //From up
-            path.setAttribute('d', `M ${firstPosX - 45} ${firstPosY}, A ${secPosX - (firstPosX - 45)} ${(secPosY - 45) - firstPosY} 0 0 1  ${secPosX} ${secPosY - 45},
+              this.svgElement.nativeElement.appendChild(path);
+            }
+            if (this.currentRoadDirection == 'down' || this.currentRoadDirection == 'rightdown' || this.currentRoadDirection == 'leftdown') {
+              //From up
+              path.setAttribute('d', `M ${firstPosX - 45} ${firstPosY}, A ${secPosX - (firstPosX - 45)} ${(secPosY - 45) - firstPosY} 0 0 1  ${secPosX} ${secPosY - 45},
                 L ${secPosX} ${secPosY + 45}, A ${secPosX - (firstPosX + 45)} ${secPosY + 45 - firstPosY} 1 0 0 ${firstPosX + 45} ${firstPosY}, Z`);
-            path.setAttribute('stroke', '#2dc115');
-            path.setAttribute('stroke-width', '1');
-            path.setAttribute('fill', '#2dc115');
+              path.setAttribute('stroke', '#2dc115');
+              path.setAttribute('stroke-width', '1');
+              path.setAttribute('fill', '#2dc115');
 
-            path.setAttribute('data-start-pos', `${firstPosX}${firstPosY}`);
-            path.setAttribute('data-start', 'rightup');
-            path.setAttribute('data-end-pos', `${secPosX}${secPosY}`);
-            path.setAttribute('data-end', 'downleft');
+              path.setAttribute('data-start-pos', `${firstPosX}${firstPosY}`);
+              path.setAttribute('data-start', 'rightup');
+              path.setAttribute('data-end-pos', `${secPosX}${secPosY}`);
+              path.setAttribute('data-end', 'downleft');
 
-            path.id = `${firstPosX}${firstPosY}${secPosX}${secPosY}`;
+              path.id = `${firstPosX}${firstPosY}${secPosX}${secPosY}`;
 
-            this.roads.push(path);
-            console.log('Roads:', this.roads);
+              this.roads.push(path);
+              console.log('Roads:', this.roads);
 
-            this.svgElement.nativeElement.appendChild(path);
+              this.svgElement.nativeElement.appendChild(path);
+            }
           }
         }
         //up
@@ -396,10 +398,11 @@ export class AppComponent implements AfterViewInit {
       this.firstNode.style.backgroundColor = '#817e7e';
       this.firstNode.style.opacity = '0.0';
       this.firstNode = null;
+      this.secondNode.style.opacity = '0.0';
       this.secondNode = null;
       this.secondNodeLine = null;
       node.style.backgroundColor = '#817e7e';
-      node.style.opacity = '0.5';
+      node.style.opacity = '0.0';
       return
     }
   }
@@ -456,18 +459,18 @@ export class AppComponent implements AfterViewInit {
             let r = secPosX - 45 - firstPosX;
             ctx.moveTo(firstPosX, firstPosY - 45);
             ctx.arcTo(secPosX - 45, firstPosY - 45, secPosX - 45, secPosY, r);
-            ctx.lineTo(secPosX+45,secPosY);
-            r = secPosX - firstPosX+45;
-            ctx.arcTo(secPosX+45, firstPosY+45, secPosX, firstPosY+45, r);
+            ctx.lineTo(secPosX + 45, secPosY);
+            r = secPosX - firstPosX + 45;
+            ctx.arcTo(secPosX + 45, firstPosY + 45, secPosX, firstPosY + 45, r);
           }
           if (this.currentRoadDirection == 'up' || this.currentRoadDirection == 'rightup' || this.currentRoadDirection == 'leftup') {
             //From down
-            let r = firstPosY-(secPosY - 45);
+            let r = firstPosY - (secPosY - 45);
             ctx.moveTo(firstPosX - 45, firstPosY);
             ctx.arcTo(firstPosX - 45, secPosY - 45, secPosX, secPosY - 45, r);
-            ctx.lineTo(secPosX,secPosY+45);
-            r = secPosX - (firstPosX+45);
-            ctx.arcTo(firstPosX+45, secPosY+45, firstPosX+45, firstPosY, r);
+            ctx.lineTo(secPosX, secPosY + 45);
+            r = secPosX - (firstPosX + 45);
+            ctx.arcTo(firstPosX + 45, secPosY + 45, firstPosX + 45, firstPosY, r);
           }
         }
       }
@@ -476,16 +479,22 @@ export class AppComponent implements AfterViewInit {
         if (secPosX - firstPosX == secPosY - firstPosY || secPosX - firstPosX == (secPosY - firstPosY) * -1) {
           if (this.currentRoadDirection == 'right' || this.currentRoadDirection == 'downright' || this.currentRoadDirection == 'upright') {
             // From left
-            const r = secPosX - firstPosX;
-            ctx.moveTo(firstPosX, firstPosY);
-            ctx.arcTo(secPosX, firstPosY, secPosX, secPosY, r);
+            let r = secPosY - (firstPosY - 45);
+            ctx.moveTo(firstPosX, firstPosY - 45);
+            ctx.arcTo(secPosX + 45, firstPosY - 45, secPosX + 45, secPosY, r);
+            ctx.lineTo(secPosX - 45, secPosY);
+            r = (secPosX - 45) - firstPosX;
+            ctx.arcTo(secPosX - 45, firstPosY + 45, firstPosX, firstPosY + 45, r);
 
           }
           if (this.currentRoadDirection == 'down' || this.currentRoadDirection == 'rightdown' || this.currentRoadDirection == 'leftdown') {
             //From up
-            const r = secPosX - firstPosX;
-            ctx.moveTo(firstPosX, firstPosY);
-            ctx.arcTo(firstPosX, secPosY, secPosX, secPosY, r);
+            let r = secPosY + 45 - firstPosY;
+            ctx.moveTo(firstPosX - 45, firstPosY);
+            ctx.arcTo(firstPosX - 45, secPosY + 45, secPosX, secPosY + 45, r);
+            ctx.lineTo(secPosX, secPosY - 45);
+            r = secPosX - (firstPosX + 45);
+            ctx.arcTo(firstPosX + 45, secPosY - 45, firstPosX + 45, firstPosY, r);
           }
         }
       }
@@ -494,40 +503,74 @@ export class AppComponent implements AfterViewInit {
         if (secPosX - firstPosX == secPosY - firstPosY || secPosX - firstPosX == (secPosY - firstPosY) * -1) {
           if (this.currentRoadDirection == 'left' || this.currentRoadDirection == 'downleft' || this.currentRoadDirection == 'upleft') {
             // From right
-
+            let r = firstPosX - secPosX - 45;
+            ctx.moveTo(firstPosX, firstPosY - 45);
+            ctx.arcTo(secPosX + 45, firstPosY - 45, secPosX + 45, secPosY, r);
+            r = firstPosX - (secPosX - 45);
+            ctx.lineTo(secPosX - 45, secPosY);
+            ctx.arcTo(secPosX - 45, firstPosY + 45, firstPosX, firstPosY + 45, r);
           }
           if (this.currentRoadDirection == 'up' || this.currentRoadDirection == 'rightup' || this.currentRoadDirection == 'leftup') {
             //From down
-
+            let r = (firstPosX + 45) - secPosX;
+            ctx.moveTo(firstPosX + 45, firstPosY);
+            ctx.arcTo(firstPosX + 45, secPosY - 45, secPosX, secPosY - 45, r);
+            r = (firstPosX - 45) - secPosX;
+            ctx.lineTo(secPosX, secPosY + 45);
+            ctx.arcTo(firstPosX - 45, secPosY + 45, firstPosX - 45, firstPosY, r);
           }
         }
       }
       // Curved road down left
       if (firstPosX > secPosX && firstPosY < secPosY) {
-        if (this.currentRoadDirection == 'left' || this.currentRoadDirection == 'downleft' || this.currentRoadDirection == 'upleft') {
-          // From right
-
-        }
-        if (this.currentRoadDirection == 'down' || this.currentRoadDirection == 'rightdown' || this.currentRoadDirection == 'leftdown') {
-          //From up
-
+        if (secPosX - firstPosX == secPosY - firstPosY || secPosX - firstPosX == (secPosY - firstPosY) * -1) {
+          if (this.currentRoadDirection == 'left' || this.currentRoadDirection == 'downleft' || this.currentRoadDirection == 'upleft') {
+            // From right
+            let r = firstPosX - (secPosX - 45);
+            ctx.moveTo(firstPosX, firstPosY - 45);
+            ctx.arcTo(secPosX - 45, firstPosY - 45, secPosX - 45, secPosY, r);
+            ctx.lineTo(secPosX + 45, secPosY);
+            r = firstPosX - (secPosX + 45);
+            ctx.arcTo(secPosX + 45, firstPosY + 45, firstPosX, firstPosY + 45, r);
+          }
+          if (this.currentRoadDirection == 'down' || this.currentRoadDirection == 'rightdown' || this.currentRoadDirection == 'leftdown') {
+            //From up
+            let r = (firstPosX - 45) - secPosX;
+            ctx.moveTo(firstPosX - 45, firstPosY);
+            ctx.arcTo(firstPosX - 45, secPosY - 45, secPosX, secPosY - 45, r);
+            ctx.lineTo(secPosX, secPosY + 45);
+            r = (firstPosX + 45) - secPosX;
+            ctx.arcTo(firstPosX + 45, secPosY + 45, firstPosX + 45, firstPosY, r);
+          }
         }
       }
       //up
       if (firstPosX == secPosX && firstPosY > secPosY) {
-
+        ctx.moveTo(firstPosX - 45, firstPosY);
+        ctx.lineTo(secPosX - 45, secPosY);
+        ctx.lineTo(secPosX + 45, secPosY);
+        ctx.lineTo(firstPosX + 45, firstPosY);
       }
       //Down
       if (firstPosX == secPosX && firstPosY < secPosY) {
-
+        ctx.moveTo(firstPosX - 45, firstPosY);
+        ctx.lineTo(secPosX - 45, secPosY);
+        ctx.lineTo(secPosX + 45, secPosY);
+        ctx.lineTo(firstPosX + 45, firstPosY);
       }
       //Right
       if (firstPosY == secPosY && firstPosX < secPosX) {
-
+        ctx.moveTo(firstPosX, firstPosY - 45);
+        ctx.lineTo(secPosX, secPosY - 45);
+        ctx.lineTo(secPosX, secPosY + 45);
+        ctx.lineTo(firstPosX, firstPosY + 45);
       }
       //Left
       if (firstPosY == secPosY && firstPosX > secPosX) {
-
+        ctx.moveTo(firstPosX, firstPosY - 45);
+        ctx.lineTo(secPosX, secPosY - 45);
+        ctx.lineTo(secPosX, secPosY + 45);
+        ctx.lineTo(firstPosX, firstPosY + 45);
       }
 
 
